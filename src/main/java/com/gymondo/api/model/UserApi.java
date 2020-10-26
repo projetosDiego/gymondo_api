@@ -1,6 +1,6 @@
 package com.gymondo.api.model;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,23 +14,23 @@ public class UserApi {
 	private String userCode;
 	private Long   subscriptionPlanId;
 	private String SubscriptionStatus;
-	private Date   ini;
-	private Date   fin;
+	private Timestamp dataIni;
+	private Timestamp dataFin;
 	
 	public UserApi() {
 		super();
 	}
-	
+
 	public UserApi(Long userId, String userName, String userCode, Long subscriptionPlanId, String subscriptionStatus,
-			Date ini, Date fin) {
+			Timestamp dataIni, Timestamp dataFin) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
 		this.userCode = userCode;
 		this.subscriptionPlanId = subscriptionPlanId;
-		SubscriptionStatus = subscriptionStatus;
-		this.ini = ini;
-		this.fin = fin;
+		this.SubscriptionStatus = subscriptionStatus;
+		this.dataIni = dataIni;
+		this.dataIni = dataFin;
 	}
 
 	public Long getUserId() {
@@ -63,16 +63,16 @@ public class UserApi {
 	public void setSubscriptionStatus(String subscriptionStatus) {
 		SubscriptionStatus = subscriptionStatus;
 	}
-	public Date getIni() {
-		return ini;
+	public Timestamp getDataIni() {
+		return dataIni;
 	}
-	public void setIni(Date ini) {
-		this.ini = ini;
+	public void setDataIni(Timestamp dataIni) {
+		this.dataIni = dataIni;
 	}
-	public Date getFin() {
-		return fin;
+	public Timestamp getDataFin() {
+		return dataFin;
 	}
-	public void setFin(Date fin) {
-		this.fin = fin;
+	public void setDataFin(Timestamp dataFin) {
+		this.dataFin = dataFin;
 	}
 }

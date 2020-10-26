@@ -8,7 +8,7 @@ import com.gymondo.api.mapper.UserMapper;
 import com.gymondo.api.model.UserApi;
 
 @Repository
-public class UserRepository {
+public class UserRepository{
 	
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -19,8 +19,8 @@ public class UserRepository {
 	}
 
 	public void save(UserApi userBd) {
-		String sql = "UPDATE userapi" + " SET subscriptionPlanId = ?, SubscriptionStatus = ? " + " WHERE userId = ?";
-		jdbcTemplate.update(sql, new Object[]{userBd.getSubscriptionPlanId(), userBd.getSubscriptionStatus(), userBd.getUserId()});
+		String sql = "UPDATE userapi" + " SET subscriptionPlanId = ?, SubscriptionStatus = ?, dataIni = ?, dataFin = ? " + " WHERE userId = ?";
+		jdbcTemplate.update(sql, new Object[]{userBd.getSubscriptionPlanId(), userBd.getSubscriptionStatus(), userBd.getDataIni(), userBd.getDataFin(), userBd.getUserId()});
 	}
 
 }

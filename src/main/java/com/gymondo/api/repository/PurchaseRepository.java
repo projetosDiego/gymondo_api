@@ -18,4 +18,9 @@ public class PurchaseRepository {
 		return jdbcTemplate.queryForObject(sql, new Object[]{productId}, new PlanMapper());
 	}
 
+	public SubscriptionPlan findPlanById(Long subscriptionPlanId) {
+		String sql = "SELECT * FROM subscriptionplan WHERE planId = ?";
+		return jdbcTemplate.queryForObject(sql, new Object[]{subscriptionPlanId}, new PlanMapper());
+	}
+
 }

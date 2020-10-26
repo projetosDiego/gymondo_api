@@ -10,8 +10,8 @@ CREATE TABLE userapi(userId BIGINT PRIMARY KEY AUTO_INCREMENT,
 					 userCode VARCHAR(4),
 					 subscriptionPlanId BIGINT,
 					 subscriptionStatus VARCHAR(20),
-					 ini DATE,
-					 fin DATE);
+					 dataIni TIMESTAMP,
+					 dataFin TIMESTAMP);
 					 
 CREATE TABLE subscriptionplan(planId BIGINT PRIMARY KEY AUTO_INCREMENT,
                               planName VARCHAR(255),

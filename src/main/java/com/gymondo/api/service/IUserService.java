@@ -1,11 +1,9 @@
 package com.gymondo.api.service;
 
-import java.util.List;
-
-import com.gymondo.api.model.UserApi;
+import com.gymondo.api.model.UserSubscription;
 
 public interface IUserService {
 
-	List<UserApi> findAllUsers();
+	UserSubscription findUserInformations(Long userId);
 
 }
