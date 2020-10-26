@@ -12,6 +12,7 @@ public class UserSubscription {
 	private Long      tax;
 	private Timestamp dateIni;
 	private Timestamp dateFin;
+	private Integer   duration;
 	
 	public Long getUserId() {
 		return userId;
@@ -60,5 +61,11 @@ public class UserSubscription {
 	}
 	public void setDateFin(Timestamp dateFin) {
 		this.dateFin = dateFin;
+	}
+	public Integer getDuration() {
+		return duration;
+	}
+	public void setDuration(Integer duration) {
+		this.duration = duration;
 	}
 }

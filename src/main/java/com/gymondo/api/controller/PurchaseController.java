@@ -23,7 +23,7 @@ public class PurchaseController {
 	
 	@RequestMapping(value = "/puseSubscription/{userId}", method = RequestMethod.POST)
 	public ResponseEntity<String> puseSubscription(@PathVariable Long userId){
-		return new ResponseEntity<String>(purchaseService.puseSubscription(userId), HttpStatus.OK);
+		return new ResponseEntity<String>(purchaseService.pauseSubscription(userId), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/unpouseSubscription/{userId}", method = RequestMethod.POST)

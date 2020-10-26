@@ -20,17 +20,22 @@ public class UserServiceImpl implements IUserService{
 	
 	@Override
 	public UserSubscription findUserInformations(Long userId) {
-		UserSubscription userInfo = new UserSubscription();
 		UserApi          userBd = UserRepository.findUserById(userId);
 		SubscriptionPlan planBd = purchaseRepository.findPlanById(userBd.getSubscriptionPlanId());
+		return populateUserInfo(userBd, planBd);
+	}
+
+	private UserSubscription populateUserInfo(UserApi userBd, SubscriptionPlan planBd) {
+		UserSubscription userInfo = new UserSubscription();
 		userInfo.setUserId(userBd.getUserId());
 		userInfo.setUserName(userBd.getUserName());
 		userInfo.setUserCode(userBd.getUserCode());
 		userInfo.setPlanName(planBd.getPlanName());
-		userInfo.setDateIni(userBd.getDataIni());
-		userInfo.setDateFin(userBd.getDataFin());
+		userInfo.setDateIni(userBd.getDateIni());
+		userInfo.setDateFin(userBd.getDateFin());
 		userInfo.setPrice(planBd.getPrice());
 		userInfo.setTax(planBd.getTax());
+		userInfo.setDuration(planBd.getDuration());
 		return userInfo;
 	}
 

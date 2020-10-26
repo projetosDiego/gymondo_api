@@ -9,30 +9,32 @@ public class UserApi {
 
 	@Id
 	@GeneratedValue
-	private Long   userId;
-	private String userName;
-	private String userCode;
-	private Long   subscriptionPlanId;
-	private String SubscriptionStatus;
-	private Timestamp dataIni;
-	private Timestamp dataFin;
+	private Long      userId;
+	private String    userName;
+	private String    userCode;
+	private Long      subscriptionPlanId;
+	private String    SubscriptionStatus;
+	private Timestamp dateIni;
+	private Timestamp dateFin;
+	private Timestamp pauseDateIni;
 	
 	public UserApi() {
 		super();
 	}
 
 	public UserApi(Long userId, String userName, String userCode, Long subscriptionPlanId, String subscriptionStatus,
-			Timestamp dataIni, Timestamp dataFin) {
+			Timestamp dateIni, Timestamp dateFin, Timestamp pauseDateIni) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
 		this.userCode = userCode;
 		this.subscriptionPlanId = subscriptionPlanId;
-		this.SubscriptionStatus = subscriptionStatus;
-		this.dataIni = dataIni;
-		this.dataIni = dataFin;
+		SubscriptionStatus = subscriptionStatus;
+		this.dateIni = dateIni;
+		this.dateFin = dateFin;
+		this.pauseDateIni = pauseDateIni;
 	}
-
+	
 	public Long getUserId() {
 		return userId;
 	}
@@ -63,16 +65,22 @@ public class UserApi {
 	public void setSubscriptionStatus(String subscriptionStatus) {
 		SubscriptionStatus = subscriptionStatus;
 	}
-	public Timestamp getDataIni() {
-		return dataIni;
+	public Timestamp getDateIni() {
+		return dateIni;
 	}
-	public void setDataIni(Timestamp dataIni) {
-		this.dataIni = dataIni;
+	public void setDateIni(Timestamp dateIni) {
+		this.dateIni = dateIni;
 	}
-	public Timestamp getDataFin() {
-		return dataFin;
+	public Timestamp getDateFin() {
+		return dateFin;
 	}
-	public void setDataFin(Timestamp dataFin) {
-		this.dataFin = dataFin;
+	public void setDateFin(Timestamp dateFin) {
+		this.dateFin = dateFin;
+	}
+	public Timestamp getPauseDateIni() {
+		return pauseDateIni;
+	}
+	public void setPauseDateIni(Timestamp pauseDateIni) {
+		this.pauseDateIni = pauseDateIni;
 	}
 }

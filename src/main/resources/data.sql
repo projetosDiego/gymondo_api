@@ -3,26 +3,30 @@ INSERT INTO userapi(USERNAME,
                     USERCODE, 
 					SUBSCRIPTIONPLANID, 
 					SUBSCRIPTIONSTATUS,
-     				DATAINI, 
-					DATAFIN) 
+     				DATEINI, 
+					DATEFIN,
+					PAUSEDATEINI) 
 					VALUES('Diego Rodrigues Gomes', 
 					       '123', 
 						   0, 
 						   null, 
 						   null, 
+						   null,
 						   null);
 	
 INSERT INTO userapi(USERNAME, 
                     USERCODE, 
 					SUBSCRIPTIONPLANID, 
 					SUBSCRIPTIONSTATUS, 
-    				DATAINI, 
-					DATAFIN) 
+    				DATEINI, 
+					DATEFIN,
+					PAUSEDATEINI) 
 					VALUES('Thatiana de Andrade Saldanha', 
 					       '321', 
 						   0, 
 						   null, 
 						   null, 
+						   null,
 						   null);	
 	
 	
@@ -61,6 +65,6 @@ INSERT INTO subscriptionplan(planName,
                                     select productid from product where productname = 'Full Product',
 									3,
 								    200.00,
-									100.);																			  
+									100.00);																			  
 
 				 

@@ -16,8 +16,9 @@ public class UserMapper implements RowMapper<UserApi>{
 				           rs.getString("userCode"),
 				           rs.getLong("subscriptionPlanId"),
 				           rs.getString("SubscriptionStatus"),
-				           rs.getTimestamp("dataIni"),
-				           rs.getTimestamp("dataFin")
+				           rs.getTimestamp("dateIni"),
+				           rs.getTimestamp("dateFin"),
+				           rs.getTimestamp("pauseDateIni")
 				);
 	}
 

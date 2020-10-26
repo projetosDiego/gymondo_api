@@ -19,8 +19,13 @@ public class UserRepository{
 	}
 
 	public void save(UserApi userBd) {
-		String sql = "UPDATE userapi" + " SET subscriptionPlanId = ?, SubscriptionStatus = ?, dataIni = ?, dataFin = ? " + " WHERE userId = ?";
-		jdbcTemplate.update(sql, new Object[]{userBd.getSubscriptionPlanId(), userBd.getSubscriptionStatus(), userBd.getDataIni(), userBd.getDataFin(), userBd.getUserId()});
+		String sql = "UPDATE userapi" + " SET subscriptionPlanId = ?, SubscriptionStatus = ?, dateIni = ?, dateFin = ?, pauseDateIni = ?" + " WHERE userId = ?";
+		jdbcTemplate.update(sql, new Object[]{userBd.getSubscriptionPlanId(), 
+				                              userBd.getSubscriptionStatus(), 
+				                              userBd.getDateIni(), 
+				                              userBd.getDateFin(), 
+				                              userBd.getPauseDateIni(), 
+				                              userBd.getUserId()});
 	}
 
 }
