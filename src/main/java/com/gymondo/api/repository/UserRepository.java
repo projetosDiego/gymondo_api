@@ -18,14 +18,4 @@ public class UserRepository{
 		return jdbcTemplate.queryForObject(sql, new Object[]{userId}, new UserMapper());
 	}
 
-	public void save(UserApi userBd) {
-		String sql = "UPDATE userapi" + " SET subscriptionPlanId = ?, SubscriptionStatus = ?, dateIni = ?, dateFin = ?, pauseDateIni = ?" + " WHERE userId = ?";
-		jdbcTemplate.update(sql, new Object[]{userBd.getSubscriptionPlanId(), 
-				                              userBd.getSubscriptionStatus(), 
-				                              userBd.getDateIni(), 
-				                              userBd.getDateFin(), 
-				                              userBd.getPauseDateIni(), 
-				                              userBd.getUserId()});
-	}
-
 }

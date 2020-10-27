@@ -5,12 +5,17 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.gymondo.api.exception.VoucherNotFoundException;
 import com.gymondo.api.model.SubscriptionPlan;
 import com.gymondo.api.model.UserApi;
+import com.gymondo.api.model.UserSubscription;
+import com.gymondo.api.model.Voucher;
 import com.gymondo.api.repository.PurchaseRepository;
 import com.gymondo.api.repository.UserRepository;
+import com.gymondo.api.repository.VoucherRepository;
 
 @Service
 public class PurchaseServiceImpl implements IPurchaseService{
@@ -22,66 +27,93 @@ public class PurchaseServiceImpl implements IPurchaseService{
 	public static final String SUBSCRIPTION_PAUSED   = "Your subscription is paused.";
 	public static final String SUBSCRIPTION_UNPAUSED = "Your subscription is unpaused.";
 	public static final String SUBSCRIPTION_CANCELED = "Your subscription is canceled.";
+	public static final String VOUCHER_NOT_FOUND     = "Voucher code not found.";
 	
 	@Autowired
 	public PurchaseRepository purchaseRepository;
 	
 	@Autowired
-	public UserRepository     UserRepository;
+	public UserRepository     userRepository;
+	
+	@Autowired
+	public VoucherRepository  voucherRepository;
 
 	@Override
-	public String buyPlan(Long userId, Long productId) {
-		UserApi          userBd = UserRepository.findUserById(userId);
+	public String buyPlan(Long userId, Long productId, String voucherCode) {
+		UserSubscription userSubscription = new UserSubscription();
+		Voucher          voucherBd        = new Voucher();
+		if(!voucherCode.equals("0")) {
+			try {
+				voucherBd = voucherRepository.findVoucherByCode(voucherCode);
+				userSubscription.setPrice(voucherBd.getPriceDescount());
+				userSubscription.setTax(voucherBd.getPercentDescount());
+			} catch (EmptyResultDataAccessException e) {
+				throw new VoucherNotFoundException(VOUCHER_NOT_FOUND);
+			}
+		}
+		
+		UserApi          userBd = userRepository.findUserById(userId);
 		SubscriptionPlan planBd = purchaseRepository.findByProductId(productId);
 		
-		userBd.setSubscriptionPlanId(planBd.getPlanId());
-		userBd.setSubscriptionStatus(ACTIVE);
-		
-		LocalDateTime ini = LocalDateTime.now();
+		LocalDateTime ini = LocalDateTime.now(); 
 		LocalDateTime fin = ini.plusMonths(3);
 		
-		userBd.setDateIni(Timestamp.valueOf(ini));
-		userBd.setDateFin(Timestamp.valueOf(fin));
+		populateUserSubscription(userSubscription, userBd, planBd, ini, fin);
 		
-		UserRepository.save(userBd);
+		purchaseRepository.insert(userSubscription);
 		return SUBSCRIPTION_DONE;
+	}
+
+	private void populateUserSubscription(UserSubscription userSubscription, UserApi userBd, SubscriptionPlan planBd,
+			LocalDateTime ini, LocalDateTime fin) {
+		userSubscription.setUserId(userBd.getUserId());
+		userSubscription.setUserName(userBd.getUserName());
+		userSubscription.setPlanId(planBd.getPlanId());
+		userSubscription.setPlanName(planBd.getPlanName());
+		userSubscription.setDateIni(Timestamp.valueOf(ini));
+		userSubscription.setDateFin(Timestamp.valueOf(fin));
+		userSubscription.setDuration(planBd.getDuration());
+		userSubscription.setPrice(planBd.getPrice() - (userSubscription.getPrice() != null ? userSubscription.getPrice() : 0));
+		userSubscription.setTax(planBd.getTax() - (userSubscription.getTax() != null ? userSubscription.getTax() : 0));
+		userSubscription.setSubscriptionStatus(ACTIVE);
 	}
 
 	@Override
 	public String pauseSubscription(Long userId) {
-		UserApi userBd = UserRepository.findUserById(userId);
-		userBd.setSubscriptionStatus(PAUSED);
+		UserSubscription userSubscriptionBd = purchaseRepository.findByUserId(userId);
+		userSubscriptionBd.setSubscriptionStatus(PAUSED);
 		
-		userBd.setPauseDateIni(Timestamp.valueOf(LocalDateTime.now()));
+		userSubscriptionBd.setPauseDate(Timestamp.valueOf(LocalDateTime.now()));
 		
-		UserRepository.save(userBd);
+		purchaseRepository.update(userSubscriptionBd);
 		return SUBSCRIPTION_PAUSED;
 	}
 
 	@Override
 	public String unpouseSubscription(Long userId) {
-		UserApi userBd = UserRepository.findUserById(userId);
-		userBd.setSubscriptionStatus(ACTIVE);
+		UserSubscription userSubscriptionBd = purchaseRepository.findByUserId(userId);
+		userSubscriptionBd.setSubscriptionStatus(ACTIVE);
 		
-		Long          daysBetween = ChronoUnit.DAYS.between(userBd.getPauseDateIni().toLocalDateTime(), LocalDateTime.now());
-		LocalDateTime dateFinAux  = userBd.getDateFin().toLocalDateTime();
+		Long          daysBetween = ChronoUnit.DAYS.between(userSubscriptionBd.getPauseDate().toLocalDateTime(), LocalDateTime.now());
+		LocalDateTime dateFinAux  = userSubscriptionBd.getDateFin().toLocalDateTime();
 		
-		userBd.setDateFin(Timestamp.valueOf(dateFinAux.plusDays(daysBetween)));
-		UserRepository.save(userBd);
+		userSubscriptionBd.setDateFin(Timestamp.valueOf(dateFinAux.plusDays(daysBetween)));
+		purchaseRepository.update(userSubscriptionBd);
 		return SUBSCRIPTION_UNPAUSED;
 	}
 
 	@Override
 	public String cancelSubscription(Long userId) {
-		UserApi userBd = UserRepository.findUserById(userId);
-		userBd.setSubscriptionStatus(CANCELED);
+		UserSubscription userSubscriptionBd = purchaseRepository.findByUserId(userId);
+		userSubscriptionBd.setSubscriptionStatus(CANCELED);
 		
-		userBd.setDateIni(null);
-		userBd.setDateFin(null);
-		userBd.setPauseDateIni(null);
-		
-		UserRepository.save(userBd);
+		purchaseRepository.update(userSubscriptionBd);
 		return SUBSCRIPTION_CANCELED;
+	}
+
+	@Override
+	public UserSubscription userSubscriptionInfo(Long userId) {
+		return purchaseRepository.findByUserId(userId);
 	}
 
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gymondo.api.model.UserSubscription;
 import com.gymondo.api.service.IPurchaseService;
 
 @RestController
@@ -16,13 +17,13 @@ public class PurchaseController {
 	@Autowired
 	public IPurchaseService purchaseService;
 	
-	@RequestMapping(value = "/purchase/{userId}/{productId}", method = RequestMethod.POST)
-	public ResponseEntity<String> findAllProducts(@PathVariable Long userId, @PathVariable Long productId){
-		return new ResponseEntity<String>(purchaseService.buyPlan(userId, productId), HttpStatus.OK);
+	@RequestMapping(value = "/purchase/{userId}/{productId}/{voucherCode}", method = RequestMethod.POST)
+	public ResponseEntity<String> findAllProducts(@PathVariable Long userId, @PathVariable Long productId, @PathVariable String voucherCode){
+		return new ResponseEntity<String>(purchaseService.buyPlan(userId, productId, voucherCode), HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/puseSubscription/{userId}", method = RequestMethod.POST)
-	public ResponseEntity<String> puseSubscription(@PathVariable Long userId){
+	@RequestMapping(value = "/pauseSubscription/{userId}", method = RequestMethod.POST)
+	public ResponseEntity<String> pauseSubscription(@PathVariable Long userId){
 		return new ResponseEntity<String>(purchaseService.pauseSubscription(userId), HttpStatus.OK);
 	}
 	
@@ -34,6 +35,11 @@ public class PurchaseController {
 	@RequestMapping(value = "/cancelSubscription/{userId}", method = RequestMethod.POST)
 	public ResponseEntity<String> cancelSubscription(@PathVariable Long userId){
 		return new ResponseEntity<String>(purchaseService.cancelSubscription(userId), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/userSubscriptionInfo/{userId}", method = RequestMethod.GET)
+	public ResponseEntity<UserSubscription> userSubscriptionInfo(@PathVariable Long userId){
+		return new ResponseEntity<UserSubscription>(purchaseService.userSubscriptionInfo(userId), HttpStatus.OK);
 	}
 
 }
