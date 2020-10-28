@@ -1,5 +1,7 @@
 package com.gymondo.api.repository;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -36,8 +38,10 @@ public class PurchaseRepository {
 				+ "                                 dateFin, "
 				+ "                                 duration, "
 				+ "                                 subscriptionStatus, "
-				+ "                                 pauseDate) "
-				+ "   VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+				+ "                                 pauseDate,"
+				+ "                                 trialDateIni,"
+				+ "                                 trialDateFin) "
+				+ "   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(sql, new Object[]{userSubscription.getUserId(),
 				                              userSubscription.getUserName(), 
 											  userSubscription.getPlanId(), 
@@ -48,11 +52,13 @@ public class PurchaseRepository {
 											  userSubscription.getDateFin(),
 											  userSubscription.getDuration(),
 											  userSubscription.getSubscriptionStatus(),
-											  userSubscription.getPauseDate()});
+											  userSubscription.getPauseDate(),
+											  userSubscription.getTrialDateIni(),
+											  userSubscription.getTrialDateFin()});
 	}
 
 	public UserSubscription findByUserId(Long userId) {
-		String sql = "SELECT * FROM usersubscription WHERE userId = ? AND subscriptionStatus = 'active'";
+		String sql = "SELECT * FROM usersubscription WHERE userId = ?";
 		return jdbcTemplate.queryForObject(sql, new Object[]{userId}, new UserSubscriptionMapper());
 	}
 	
@@ -70,5 +76,17 @@ public class PurchaseRepository {
 											  userSubscription.getPauseDate(),
 											  userSubscription.getUserId()});
 	}
+	
+	public List<UserSubscription> findAll() {
+		String sql = "SELECT * FROM usersubscription";
+		return jdbcTemplate.query(sql, new UserSubscriptionMapper());
+	}
+
+	public void delete(Long userSubscriptionId) {
+		String sql = "DELETE FROM usersubscription WHERE userSubscriptionId = ?";
+		jdbcTemplate.update(sql, new Object[]{userSubscriptionId});
+	}
+	
+	
 
 }

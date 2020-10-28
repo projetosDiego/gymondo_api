@@ -28,4 +28,6 @@ CREATE TABLE usersubscription(userSubscriptionId BIGINT PRIMARY KEY AUTO_INCREME
 							  dateFin TIMESTAMP,
 							  duration INTEGER,
 							  subscriptionStatus VARCHAR(10),
-							  pauseDate TIMESTAMP);				  
+							  pauseDate TIMESTAMP,
+							  trialDateIni TIMESTAMP,
+							  trialDateFin TIMESTAMP);				  

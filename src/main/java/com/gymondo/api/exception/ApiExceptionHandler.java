@@ -22,5 +22,29 @@ public class ApiExceptionHandler {
 		);
 		return new ResponseEntity<>(apiException, notFound);
 	}
+	
+	@ExceptionHandler(value = {PauseTrialException.class})
+	public ResponseEntity<Object> handlePauseTrialException(PauseTrialException e){
+		HttpStatus notFound = HttpStatus.NOT_FOUND;
+		ApiException apiException = new ApiException(
+				e.getMessage(),
+                e, 
+				notFound, 
+				ZonedDateTime.now(ZoneId.of("Z"))
+		);
+		return new ResponseEntity<>(apiException, notFound);
+	}
+	
+	@ExceptionHandler(value = {UserInforNotFoundException.class})
+	public ResponseEntity<Object> handleUserInforNotFoundException(UserInforNotFoundException e){
+		HttpStatus notFound = HttpStatus.NOT_FOUND;
+		ApiException apiException = new ApiException(
+				e.getMessage(),
+                e, 
+				notFound, 
+				ZonedDateTime.now(ZoneId.of("Z"))
+		);
+		return new ResponseEntity<>(apiException, notFound);
+	}
 
 }

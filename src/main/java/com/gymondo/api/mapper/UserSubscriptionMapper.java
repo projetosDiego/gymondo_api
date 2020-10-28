@@ -22,7 +22,9 @@ public class UserSubscriptionMapper implements RowMapper<UserSubscription>{
 				                    rs.getTimestamp("dateFin"),
 				                    rs.getInt("duration"),
 				                    rs.getString("subscriptionStatus"),
-				                    rs.getTimestamp("pauseDate")
+				                    rs.getTimestamp("pauseDate"),
+				                    rs.getTimestamp("trialDateIni"),
+				                    rs.getTimestamp("trialDateFin")
 				);
 	}
 

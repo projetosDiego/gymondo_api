@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.gymondo.api.exception.PauseTrialException;
+import com.gymondo.api.exception.UserInforNotFoundException;
 import com.gymondo.api.exception.VoucherNotFoundException;
 import com.gymondo.api.model.SubscriptionPlan;
 import com.gymondo.api.model.UserApi;
@@ -20,14 +22,17 @@ import com.gymondo.api.repository.VoucherRepository;
 @Service
 public class PurchaseServiceImpl implements IPurchaseService{
 	
-	public static final String ACTIVE                = "active";
-	public static final String PAUSED                = "paused";
-	public static final String CANCELED              = "canceled";
-	public static final String SUBSCRIPTION_DONE     = "Your subscription is done!";
-	public static final String SUBSCRIPTION_PAUSED   = "Your subscription is paused.";
-	public static final String SUBSCRIPTION_UNPAUSED = "Your subscription is unpaused.";
-	public static final String SUBSCRIPTION_CANCELED = "Your subscription is canceled.";
-	public static final String VOUCHER_NOT_FOUND     = "Voucher code not found.";
+	public static final String ACTIVE                  = "active";
+	public static final String PAUSED                  = "paused";
+	public static final String CANCELED                = "canceled";
+	public static final String TRIAL                   = "trial";
+	public static final String SUBSCRIPTION_DONE       = "Your subscription is done!";
+	public static final String SUBSCRIPTION_PAUSED     = "Your subscription is paused.";
+	public static final String SUBSCRIPTION_UNPAUSED   = "Your subscription is unpaused.";
+	public static final String SUBSCRIPTION_CANCELED   = "Your subscription is canceled.";
+	public static final String VOUCHER_NOT_FOUND       = "Voucher code not found.";
+	public static final String PAUSE_TRIAL_EXCEPTION   = "You can not pause a subscription during the trial period.";
+	public static final String USER_NOTFOUND_EXCEPTION = "This user does not have purchase informations.";
 	
 	@Autowired
 	public PurchaseRepository purchaseRepository;
@@ -42,7 +47,7 @@ public class PurchaseServiceImpl implements IPurchaseService{
 	public String buyPlan(Long userId, Long productId, String voucherCode) {
 		UserSubscription userSubscription = new UserSubscription();
 		Voucher          voucherBd        = new Voucher();
-		if(!voucherCode.equals("0")) {
+		if(!voucherCode.equals("0") && voucherCode != null) {
 			try {
 				voucherBd = voucherRepository.findVoucherByCode(voucherCode);
 				userSubscription.setPrice(voucherBd.getPriceDescount());
@@ -55,17 +60,20 @@ public class PurchaseServiceImpl implements IPurchaseService{
 		UserApi          userBd = userRepository.findUserById(userId);
 		SubscriptionPlan planBd = purchaseRepository.findByProductId(productId);
 		
-		LocalDateTime ini = LocalDateTime.now(); 
-		LocalDateTime fin = ini.plusMonths(3);
+		LocalDateTime trialIni = LocalDateTime.now(); 
+		LocalDateTime trialFin = trialIni.plusMonths(1);
 		
-		populateUserSubscription(userSubscription, userBd, planBd, ini, fin);
+		LocalDateTime ini = trialFin.plusDays(1); 
+		LocalDateTime fin = ini.plusMonths(planBd.getDuration());
+		
+		populateUserSubscription(userSubscription, userBd, planBd, ini, fin, trialIni, trialFin);
 		
 		purchaseRepository.insert(userSubscription);
 		return SUBSCRIPTION_DONE;
 	}
 
 	private void populateUserSubscription(UserSubscription userSubscription, UserApi userBd, SubscriptionPlan planBd,
-			LocalDateTime ini, LocalDateTime fin) {
+			LocalDateTime ini, LocalDateTime fin, LocalDateTime trialIni, LocalDateTime trialFin) {
 		userSubscription.setUserId(userBd.getUserId());
 		userSubscription.setUserName(userBd.getUserName());
 		userSubscription.setPlanId(planBd.getPlanId());
@@ -75,12 +83,17 @@ public class PurchaseServiceImpl implements IPurchaseService{
 		userSubscription.setDuration(planBd.getDuration());
 		userSubscription.setPrice(planBd.getPrice() - (userSubscription.getPrice() != null ? userSubscription.getPrice() : 0));
 		userSubscription.setTax(planBd.getTax() - (userSubscription.getTax() != null ? userSubscription.getTax() : 0));
-		userSubscription.setSubscriptionStatus(ACTIVE);
+		userSubscription.setTrialDateIni(Timestamp.valueOf(trialIni));
+		userSubscription.setTrialDateFin(Timestamp.valueOf(trialFin));
+		userSubscription.setSubscriptionStatus(TRIAL);
 	}
 
 	@Override
 	public String pauseSubscription(Long userId) {
 		UserSubscription userSubscriptionBd = purchaseRepository.findByUserId(userId);
+		if(userSubscriptionBd.getSubscriptionStatus().equals(TRIAL)) {
+			throw new PauseTrialException(PAUSE_TRIAL_EXCEPTION);
+		}
 		userSubscriptionBd.setSubscriptionStatus(PAUSED);
 		
 		userSubscriptionBd.setPauseDate(Timestamp.valueOf(LocalDateTime.now()));
@@ -105,15 +118,17 @@ public class PurchaseServiceImpl implements IPurchaseService{
 	@Override
 	public String cancelSubscription(Long userId) {
 		UserSubscription userSubscriptionBd = purchaseRepository.findByUserId(userId);
-		userSubscriptionBd.setSubscriptionStatus(CANCELED);
-		
-		purchaseRepository.update(userSubscriptionBd);
+		purchaseRepository.delete(userSubscriptionBd.getUserSubscriptionId());
 		return SUBSCRIPTION_CANCELED;
 	}
 
 	@Override
 	public UserSubscription userSubscriptionInfo(Long userId) {
-		return purchaseRepository.findByUserId(userId);
+		try {
+			return purchaseRepository.findByUserId(userId);
+		} catch (EmptyResultDataAccessException e) {
+			throw new UserInforNotFoundException(USER_NOTFOUND_EXCEPTION);
+		}
 	}
 
 }

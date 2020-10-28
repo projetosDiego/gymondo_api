@@ -16,14 +16,16 @@ public class UserSubscription {
 	private Integer   duration;
 	private String    subscriptionStatus;
 	private Timestamp pauseDate;
+	private Timestamp trialDateIni;
+	private Timestamp trialDateFin;
 	
 	public UserSubscription() {
 		super();
 	}
-	
+
 	public UserSubscription(Long userSubscriptionId, Long userId, String userName, Long planId, String planName,
 			Long price, Long tax, Timestamp dateIni, Timestamp dateFin, Integer duration, String subscriptionStatus,
-			Timestamp pauseDate) {
+			Timestamp pauseDate, Timestamp trialDateIni, Timestamp trialDateFin) {
 		super();
 		this.userSubscriptionId = userSubscriptionId;
 		this.userId = userId;
@@ -37,6 +39,8 @@ public class UserSubscription {
 		this.duration = duration;
 		this.subscriptionStatus = subscriptionStatus;
 		this.pauseDate = pauseDate;
+		this.trialDateIni = trialDateIni;
+		this.trialDateFin = trialDateFin;
 	}
 
 	public Long getUserSubscriptionId() {
@@ -110,5 +114,17 @@ public class UserSubscription {
 	}
 	public void setPauseDate(Timestamp pauseDate) {
 		this.pauseDate = pauseDate;
+	}
+	public Timestamp getTrialDateIni() {
+		return trialDateIni;
+	}
+	public void setTrialDateIni(Timestamp trialDateIni) {
+		this.trialDateIni = trialDateIni;
+	}
+	public Timestamp getTrialDateFin() {
+		return trialDateFin;
+	}
+	public void setTrialDateFin(Timestamp trialDateFin) {
+		this.trialDateFin = trialDateFin;
 	}
 }
