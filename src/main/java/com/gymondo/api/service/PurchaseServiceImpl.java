@@ -47,7 +47,7 @@ public class PurchaseServiceImpl implements IPurchaseService{
 	public String buyPlan(Long userId, Long productId, String voucherCode) {
 		UserSubscription userSubscription = new UserSubscription();
 		Voucher          voucherBd        = new Voucher();
-		if(!voucherCode.equals("0") && voucherCode != null) {
+		if(!voucherCode.equals("0")) {
 			try {
 				voucherBd = voucherRepository.findVoucherByCode(voucherCode);
 				userSubscription.setPrice(voucherBd.getPriceDescount());
@@ -104,7 +104,7 @@ public class PurchaseServiceImpl implements IPurchaseService{
 
 	@Override
 	public String unpouseSubscription(Long userId) {
-		UserSubscription userSubscriptionBd = purchaseRepository.findByUserId(userId);
+ 		UserSubscription userSubscriptionBd = purchaseRepository.findByUserId(userId);
 		userSubscriptionBd.setSubscriptionStatus(ACTIVE);
 		
 		Long          daysBetween = ChronoUnit.DAYS.between(userSubscriptionBd.getPauseDate().toLocalDateTime(), LocalDateTime.now());
