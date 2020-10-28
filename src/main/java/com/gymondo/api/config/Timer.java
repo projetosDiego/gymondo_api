@@ -23,14 +23,13 @@ public class Timer {
     @Autowired
 	public PurchaseRepository purchaseRepository;
     
-    @Scheduled(fixedDelay = MINUTE) 
+    @Scheduled(fixedDelay = DAY) 
     public void vrifyTrialPeriodEnd() { 
         List<UserSubscription> list = purchaseRepository.findAll();
         if(!list.isEmpty()) {
         	LocalDate localDate = LocalDate.now();
             for (UserSubscription userSubscription : list) {
-//    			if(localDate.isEqual(userSubscription.getDateIni().toLocalDateTime().toLocalDate())) {
-    			if(userSubscription.getDateIni().toLocalDateTime().toLocalDate().isEqual(userSubscription.getDateIni().toLocalDateTime().toLocalDate())) {	
+    			if(localDate.isEqual(userSubscription.getDateIni().toLocalDateTime().toLocalDate())) {
     				userSubscription.setSubscriptionStatus(ACTIVE);
     				purchaseRepository.update(userSubscription);
     			}
